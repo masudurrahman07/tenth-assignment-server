@@ -92,3 +92,39 @@ app.post("/jobs", async (req, res) => {
   }
 });
 
+// ===================== Commit 7: PUT update job =====================
+app.put("/jobs/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const updatedData = req.body;
+
+    
+    if (updatedData.acceptedBy) {
+      const result = await jobsCollection.updateOne(
+        { _id: new ObjectId(id) },
+        { $addToSet: { acceptedBy: updatedData.acceptedBy[0] } }
+      );
+      return res.send(result);
+    }
+
+    
+    if (updatedData.removeUser) {
+      const result = await jobsCollection.updateOne(
+        { _id: new ObjectId(id) },
+        { $pull: { acceptedBy: updatedData.removeUser } }
+      );
+      return res.send(result);
+    }
+
+    
+    const { title, category, summary, coverImage } = updatedData;
+    const result = await jobsCollection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { title, category, summary, coverImage } }
+    );
+    res.send(result);
+  } catch (err) {
+    res.status(500).send({ message: "Failed to update job", error: err });
+  }
+});
+
