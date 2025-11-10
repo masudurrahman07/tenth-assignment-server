@@ -15,7 +15,7 @@ app.get("/", (req, res) => {
   res.send("Freelance Marketplace Backend is Running!");
 });
 
-
+// ===================== Commit 2: MongoDB connection =====================
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 const uri =
@@ -38,4 +38,9 @@ async function connectDB() {
   }
 }
 connectDB();
+
+
+const dbName = "jobs-db";
+const collectionName = "jobs";
+const jobsCollection = client.db(dbName).collection(collectionName);
 
