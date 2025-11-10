@@ -1,21 +1,19 @@
-// ===================== Commit 1: Initial setup =====================
-// Setup Express server, CORS, JSON middleware, and test route
+
 const express = require("express");
 const cors = require("cors");
 
 const app = express();
 const port = 3000;
 
-// Middleware
+// middleware
 app.use(cors());
 app.use(express.json());
 
-// Test route
 app.get("/", (req, res) => {
   res.send("Freelance Marketplace Backend is Running!");
 });
 
-// ===================== Commit 2: MongoDB connection =====================
+
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 const uri =
@@ -39,12 +37,11 @@ async function connectDB() {
 }
 connectDB();
 
-// ===================== Commit 3: Database & collection setup =====================
 const dbName = "jobs-db";
 const collectionName = "jobs";
 const jobsCollection = client.db(dbName).collection(collectionName);
 
-// ===================== Commit 4: GET all jobs =====================
+
 app.get("/jobs", async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 0;
@@ -65,7 +62,7 @@ app.get("/jobs", async (req, res) => {
   }
 });
 
-// ===================== Commit 5: GET single job by ID =====================
+
 app.get("/jobs/:id", async (req, res) => {
   try {
     const id = req.params.id;
@@ -79,7 +76,7 @@ app.get("/jobs/:id", async (req, res) => {
   }
 });
 
-// ===================== Commit 6: POST new job =====================
+
 app.post("/jobs", async (req, res) => {
   try {
     const job = req.body;
@@ -92,7 +89,7 @@ app.post("/jobs", async (req, res) => {
   }
 });
 
-// ===================== Commit 7: PUT update job =====================
+
 app.put("/jobs/:id", async (req, res) => {
   try {
     const id = req.params.id;
@@ -128,7 +125,7 @@ app.put("/jobs/:id", async (req, res) => {
   }
 });
 
-// ===================== Commit 8: DELETE job =====================
+
 app.delete("/jobs/:id", async (req, res) => {
   try {
     const id = req.params.id;
