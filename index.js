@@ -39,12 +39,12 @@ async function connectDB() {
 }
 connectDB();
 
-
+// ===================== Commit 3: Database & collection setup =====================
 const dbName = "jobs-db";
 const collectionName = "jobs";
 const jobsCollection = client.db(dbName).collection(collectionName);
 
-
+// ===================== Commit 4: GET all jobs =====================
 app.get("/jobs", async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 0;
@@ -62,6 +62,20 @@ app.get("/jobs", async (req, res) => {
     res.send(updatedJobs);
   } catch (err) {
     res.status(500).send({ message: "Failed to fetch jobs", error: err });
+  }
+});
+
+// ===================== Commit 5: GET single job by ID =====================
+app.get("/jobs/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const job = await jobsCollection.findOne({ _id: new ObjectId(id) });
+    if (!job) return res.status(404).send({ message: "Job not found" });
+
+    if (!job.acceptedBy) job.acceptedBy = [];
+    res.send(job);
+  } catch (err) {
+    res.status(500).send({ message: "Failed to fetch job", error: err });
   }
 });
 
