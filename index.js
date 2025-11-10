@@ -44,3 +44,24 @@ const dbName = "jobs-db";
 const collectionName = "jobs";
 const jobsCollection = client.db(dbName).collection(collectionName);
 
+
+app.get("/jobs", async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 0;
+    const jobs = await jobsCollection
+      .find()
+      .sort({ postedAt: -1 })
+      .limit(limit)
+      .toArray();
+
+    const updatedJobs = jobs.map((job) => ({
+      ...job,
+      acceptedBy: job.acceptedBy || [],
+    }));
+
+    res.send(updatedJobs);
+  } catch (err) {
+    res.status(500).send({ message: "Failed to fetch jobs", error: err });
+  }
+});
+
