@@ -79,3 +79,16 @@ app.get("/jobs/:id", async (req, res) => {
   }
 });
 
+// ===================== Commit 6: POST new job =====================
+app.post("/jobs", async (req, res) => {
+  try {
+    const job = req.body;
+    job.postedAt = job.postedAt || new Date();
+    job.acceptedBy = job.acceptedBy || [];
+    const result = await jobsCollection.insertOne(job);
+    res.send(result);
+  } catch (err) {
+    res.status(500).send({ message: "Failed to add job", error: err });
+  }
+});
+
