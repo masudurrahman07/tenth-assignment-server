@@ -1,45 +1,41 @@
-const express = require('express')
-const app = express()
-const port = 3000
-const cors = require('cors')
-const { MongoClient, ServerApiVersion } = require('mongodb');
+// ===================== Commit 1: Initial setup =====================
+// Setup Express server, CORS, JSON middleware, and test route
+const express = require("express");
+const cors = require("cors");
+
+const app = express();
+const port = 3000;
 
 // Middleware
 app.use(cors());
-app.use(express.json())
-const uri = "mongodb+srv://simpleDBUser:L8jrYrRlPRIJ7PVQ@cluster0.mzammbm.mongodb.net/?appName=Cluster0";
+app.use(express.json());
 
-// L8jrYrRlPRIJ7PVQ
-// simpleDBUser
+// Test route
+app.get("/", (req, res) => {
+  res.send("Freelance Marketplace Backend is Running!");
+});
 
 
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const uri =
+  "mongodb+srv://simpleDBUser:L8jrYrRlPRIJ7PVQ@cluster0.mzammbm.mongodb.net/?appName=Cluster0";
+
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
     strict: true,
     deprecationErrors: true,
-  }
+  },
 });
-async function run() {
+
+async function connectDB() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
-  } finally {
-    // Ensures that the client will close when you finish/error
-    // await client.close();
+    console.log("MongoDB connected successfully!");
+  } catch (err) {
+    console.error(err);
   }
 }
-run().catch(console.dir);
+connectDB();
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
-
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
