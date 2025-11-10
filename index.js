@@ -128,3 +128,21 @@ app.put("/jobs/:id", async (req, res) => {
   }
 });
 
+// ===================== Commit 8: DELETE job =====================
+app.delete("/jobs/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const result = await jobsCollection.deleteOne({ _id: new ObjectId(id) });
+    if (result.deletedCount === 0) {
+      return res.status(404).send({ message: "Job not found" });
+    }
+    res.send({ message: "Job deleted successfully" });
+  } catch (err) {
+    res.status(500).send({ message: "Failed to delete job", error: err });
+  }
+});
+
+
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
+});
