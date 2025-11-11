@@ -24,12 +24,12 @@ const client = new MongoClient(uri, {
     version: ServerApiVersion.v1,
     strict: true,
     deprecationErrors: true,
-  },
-});
+  },});
+
 
 async function connectDB() {
   try {
-    await client.connect();
+    // await client.connect();
     console.log("MongoDB connected successfully!");
   } catch (err) {
     console.error(err);
@@ -40,6 +40,7 @@ connectDB();
 const dbName = "jobs-db";
 const collectionName = "jobs";
 const jobsCollection = client.db(dbName).collection(collectionName);
+
 
 
 app.get("/jobs", async (req, res) => {
@@ -59,8 +60,8 @@ app.get("/jobs", async (req, res) => {
     res.send(updatedJobs);
   } catch (err) {
     res.status(500).send({ message: "Failed to fetch jobs", error: err });
-  }
-});
+  }});
+
 
 
 app.get("/jobs/:id", async (req, res) => {
@@ -73,8 +74,8 @@ app.get("/jobs/:id", async (req, res) => {
     res.send(job);
   } catch (err) {
     res.status(500).send({ message: "Failed to fetch job", error: err });
-  }
-});
+  }});
+
 
 
 app.post("/jobs", async (req, res) => {
@@ -86,8 +87,7 @@ app.post("/jobs", async (req, res) => {
     res.send(result);
   } catch (err) {
     res.status(500).send({ message: "Failed to add job", error: err });
-  }
-});
+  }});
 
 
 app.put("/jobs/:id", async (req, res) => {
@@ -96,22 +96,22 @@ app.put("/jobs/:id", async (req, res) => {
     const updatedData = req.body;
 
     
-    if (updatedData.acceptedBy) {
+    if (updatedData.acceptedBy && updatedData.acceptedBy[0]) {
+      const emailToAdd = updatedData.acceptedBy[0];
       const result = await jobsCollection.updateOne(
         { _id: new ObjectId(id) },
-        { $addToSet: { acceptedBy: updatedData.acceptedBy[0] } }
+        { $addToSet: { acceptedBy: emailToAdd } }
       );
-      return res.send(result);
-    }
+      return res.send(result);}
 
     
     if (updatedData.removeUser) {
+      const emailToRemove = updatedData.removeUser;
       const result = await jobsCollection.updateOne(
         { _id: new ObjectId(id) },
-        { $pull: { acceptedBy: updatedData.removeUser } }
+        { $pull: { acceptedBy: emailToRemove } }
       );
-      return res.send(result);
-    }
+      return res.send(result);}
 
     
     const { title, category, summary, coverImage } = updatedData;
@@ -120,10 +120,12 @@ app.put("/jobs/:id", async (req, res) => {
       { $set: { title, category, summary, coverImage } }
     );
     res.send(result);
+
   } catch (err) {
     res.status(500).send({ message: "Failed to update job", error: err });
   }
 });
+
 
 
 app.delete("/jobs/:id", async (req, res) => {
